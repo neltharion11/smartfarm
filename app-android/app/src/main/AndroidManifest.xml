@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- ================= 网络权限（MQTT over WebSocket，阶段 C4）=================
+         HiveMQ Cloud 只提供 TLS 入口（mqtts://:8883 与 wss://:8884/mqtt），
+         两者都必须有 INTERNET，否则连接直接抛 SecurityException。
+         ACCESS_NETWORK_STATE 用来在离线时**立刻**提示"无网络"，
+         而不是让用户干等到连接超时——按 PLAN C4，超时绝不能显示成功。 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- ================= BLE 权限 =================
+         Android 12(API 31) 起 BLE 改用运行时权限 BLUETOOTH_SCAN / BLUETOOTH_CONNECT，
+         旧的 BLUETOOTH/BLUETOOTH_ADMIN 失效。
+
+         neverForLocation：本应用只用 BLE 读取自家农场设备的数据，**不推导位置**。
+         声明它就不必再申请定位权限（否则系统会连带要求）。 -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation"
+        tools:targetApi="s" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+    <!-- API 31 以下的老权限与定位权限 -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_ADMIN"
+        android:maxSdkVersion="30" />
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        android:maxSdkVersion="30" />
+
+    <!-- 没有 BLE 的机器装不了（模拟器就会因此被挡掉，这是有意的：
+         BLE 测试只能真机） -->
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+
+    <application
+        android:allowBackup="true"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.SmartFarm">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

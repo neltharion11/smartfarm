@@ -1,0 +1,88 @@
+# ESP-IDF 构建产物与本地配置
+build/
+sdkconfig
+sdkconfig.old
+dependencies.lock
+managed_components/
+
+# ⚠️ 本地凭据 —— 绝不可入仓库（本项目会开源）
+# WiFi 的 SSID/密码、MQTT 的用户名/密码都放在这里。
+# 提交前请确认本文件已被忽略：git check-ignore -v main/secrets.h
+main/secrets.h
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+
+# ---------------------------------------------------------------
+# Android 工程（app-android/）
+#   local.properties 记录本机 SDK 路径，**因人而异**，绝不进仓库；
+#   Studio 首次打开工程时会自己生成它。
+#   mqtt.properties 记录 APP 自己的 broker/主题/凭据，不从固件目录读取。
+# ---------------------------------------------------------------
+app-android/local.properties
+app-android/mqtt.properties
+app-android/.gradle/
+app-android/build/
+app-android/app/build/
+app-android/captures/
+*.apk
+*.aab
+*.hprof
+.kotlin/
+
+# 本机分析依赖、临时快照与导出报告
+/tmp/
+/output/
+__pycache__/
+*.pyc
+
+# Altium 自动保存、预览和项目日志；保留正式工程、原理图、PCB 与器件库
+**/History/
+**/__Previews/
+**/Project Logs for */
+**/Project Outputs for */
+*.PrjPcbStructure
+*.PrjPcbVariants
+*.SchDocPreview
+*.PcbDocPreview
+*.SchDocLck
+*.PcbDocLck
+*.PrjPcbLck
+*.bak
+*.Bkp
+*.~*
+
+# 硬件资料中附带的安装程序及示例编译产物
+/hardware/**/*.exe
+/hardware/**/*.dll
+/hardware/**/*.o
+/hardware/**/*.obj
+/hardware/**/*.d
+/hardware/**/*.crf
+/hardware/**/*.axf
+/hardware/**/*.hex
+/hardware/**/*.map
+/hardware/**/*.lst
+/hardware/**/*.lnp
+/hardware/**/*.plg
+/hardware/**/*.dep
+/hardware/**/*.pbi
+/hardware/**/*.cout
+/hardware/**/*.out
+/hardware/**/*.r43
+/hardware/**/*.d43
+/hardware/**/*.browse
+/hardware/**/*.iex
+/hardware/**/*.dni
+/hardware/**/*.dbgdt
+/hardware/**/*.pbd
+/hardware/**/*.bpl
+/hardware/**/*.m51
+/hardware/**/*.evk
+/hardware/**/*.log
+
+# 说明：sdkconfig 被忽略是 ESP-IDF 的常见做法，但这意味着**克隆仓库后
+# sdkconfig 会重新生成**。因此所有「必须复现」的配置（flash 尺寸、分区表、
+# TLS 证书包等）都已写入 sdkconfig.defaults，请勿只改 sdkconfig 而忘记同步过去。

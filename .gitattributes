@@ -1,0 +1,6 @@
+# Preserve Altium files byte for byte, including text-format vendor PCB documents.
+*.[Pp][Cc][Bb][Dd][Oo][Cc] binary
+*.[Ss][Cc][Hh][Dd][Oo][Cc] binary
+*.[Pp][Cc][Bb][Ll][Ii][Bb] binary
+*.[Ss][Cc][Hh][Ll][Ii][Bb] binary
+*.[Ii][Nn][Tt][Ll][Ii][Bb] binary

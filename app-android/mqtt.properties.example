@@ -1,0 +1,11 @@
+# 复制为 app-android/mqtt.properties，再填入 APP 自己的 MQTT 配置。
+# mqtt.properties 已被 Git 忽略；不要提交真实账号和密码。
+# broker 与 mqtt.topicRoot 必须和 ESP32 实际使用的值一致。
+
+# 推荐直接填写 WebSocket 地址，例如 wss://broker.example.com:8884/mqtt。
+# 若只填写 mqtt.uri（TCP 地址），APP 会尝试推导 WS 地址。
+mqtt.wsUri=
+mqtt.uri=
+mqtt.user=
+mqtt.password=
+mqtt.topicRoot=farm/node1

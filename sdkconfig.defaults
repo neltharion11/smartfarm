@@ -1,0 +1,67 @@
+# 工程默认配置（首次配置 / 删除 sdkconfig 后自动生效）
+#
+# ⚠️ 为什么关键设置必须写在这里：
+#    .gitignore 忽略了 sdkconfig（ESP-IDF 常见做法），所以 sdkconfig 不会进仓库。
+#    只改 sdkconfig 的话，别人克隆仓库后这些设置**全部丢失**。
+#    因此凡是「必须复现」的配置都要在这里声明一份。
+
+# 目标芯片：ESP32（经典双核，如 ESP32-WROOM-32 / DevKitC）
+CONFIG_IDF_TARGET="esp32"
+
+# ---------------------------------------------------------------
+# Flash 与分区表
+#   模组物理上是 4 MB，但原配置写成 2 MB，导致 app 分区只有 1 MB，
+#   装不下 WiFi + BLE + MQTT + TLS（预计约 1.3 MB）。
+#   改为 4 MB 并启用自定义双 OTA 分区表（每槽 1.94 MB，支持 OTA 升级）。
+# ---------------------------------------------------------------
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+
+# ---------------------------------------------------------------
+# TLS：内置 CA 证书包
+#   用于验证服务器证书（HiveMQ Cloud 使用公共 CA 签发）。
+#   好处是 CA 轮换自动跟上，不必往固件里硬编码某张证书。
+#   代价是固件增加约 100 KB；若空间紧张可改用 DEFAULT_CMN。
+# ---------------------------------------------------------------
+CONFIG_MBEDTLS_CERTIFICATE_BUNDLE=y
+CONFIG_MBEDTLS_CERTIFICATE_BUNDLE_DEFAULT_FULL=y
+
+# ---------------------------------------------------------------
+# 主任务栈：WiFi + TLS 初始化会消耗较多栈，默认 3.5 KB 偏小
+# ---------------------------------------------------------------
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
+
+# ---------------------------------------------------------------
+# 蓝牙：NimBLE（BLE only）
+#   选 NimBLE 而非 Bluedroid：同为 BLE-only 场景，NimBLE 省约 100 KB flash 与可观 RAM。
+#   本项目只用 BLE 外设角色（手机连设备），不需要经典蓝牙。
+# ---------------------------------------------------------------
+CONFIG_BT_ENABLED=y
+# CONFIG_BT_BLUEDROID_ENABLED is not set
+CONFIG_BT_NIMBLE_ENABLED=y
+CONFIG_BT_CONTROLLER_ENABLED=y
+
+# 只做外设（从机）；关掉用不到的角色以省 RAM
+CONFIG_BT_NIMBLE_ROLE_PERIPHERAL=y
+# CONFIG_BT_NIMBLE_ROLE_CENTRAL is not set
+# CONFIG_BT_NIMBLE_ROLE_OBSERVER is not set
+# CONFIG_BT_NIMBLE_ROLE_BROADCASTER is not set
+
+CONFIG_BT_NIMBLE_MAX_CONNECTIONS=1
+
+# ⚠️ 关键：默认 ATT MTU 23 时有效载荷只有 20 字节，
+#    而我们的遥测 JSON 约 110 字节，不协商 MTU 就会被截断。
+#    这里设 512（ATT 上限），实际值由连接时的 MTU 交换决定。
+CONFIG_BT_NIMBLE_ATT_PREFERRED_MTU=512
+
+# ---------------------------------------------------------------
+# BLE 安全（A8）
+#   NVS_PERSIST：配对绑定密钥存 NVS —— 已配对的手机重连免再输 Passkey
+#   SM_SC      ：LE Secure Connections（更强的配对加密）
+#   另在 ble_svc.c 里运行时要求认证配对（显示 6 位 Passkey）防中间人，
+#   并给指令/配网特征标记 WRITE_ENC，使未加密链路写不进来。
+# ---------------------------------------------------------------
+CONFIG_BT_NIMBLE_NVS_PERSIST=y
+CONFIG_BT_NIMBLE_SM_SC=y
+

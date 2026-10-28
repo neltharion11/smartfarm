@@ -1,0 +1,45 @@
+[versions]
+# 与本机 Android Studio 自带 JDK 25 配套的版本组合（2026-09 实测可用）
+agp = "9.4.1"
+kotlin = "2.4.20"
+
+coreKtx = "1.19.0"
+lifecycleRuntimeKtx = "2.11.0"
+activityCompose = "1.13.0"
+composeBom = "2026.09.00"
+junit = "4.13.2"
+orgjson = "20260814"
+paho = "1.2.5"
+
+[libraries]
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+
+# Compose 各构件版本由 BOM 统一管理，不单独写版本号
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+
+# 单元测试：遥测分片重组与解析是纯逻辑，放在 JVM 上验证（不需要手机）
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+# ⚠️ 必须显式引入真实 org.json：Android SDK 里的 org.json 在**本地单测**中是
+# 空壳实现（调用即抛 "not mocked"），会让所有解析测试假失败。
+orgjson = { group = "org.json", name = "json", version.ref = "orgjson" }
+
+# MQTT over WebSocket（PLAN C4）
+# ⚠️ 用**核心客户端** org.eclipse.paho.client.mqttv3，
+#    不是已废弃的 org.eclipse.paho.android.service。
+#    PLAN 里"Paho Android Service 已废弃"说的正是那个 Service 包装；
+#    核心客户端仍在维护，是一个纯 Java 小库（约 300 KB、无 Netty、无 native 依赖），
+#    原生支持 ws:// 与 wss://。相比 Netty 系客户端，在 Android 上的运行时风险低得多
+#    ——这一点在本项目里格外重要，因为 C4 的实机验证需要真机。
+paho-mqttv3 = { group = "org.eclipse.paho", name = "org.eclipse.paho.client.mqttv3", version.ref = "paho" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

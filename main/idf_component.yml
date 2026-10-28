@@ -1,0 +1,12 @@
+## 本组件（main）的托管组件依赖
+##
+## espressif/mqtt —— ESP-MQTT 客户端。
+## 注意：IDF 5.x 起 esp-mqtt 已从 IDF 核心移到「组件注册表」，
+## 本机 IDF 6.0.2 的 components/mqtt 里只剩测试用例，
+## 真正的库必须由构建系统从注册表下载到 <工程>/managed_components/。
+## 因此构建时必须允许依赖下载（LUXAR 构建工具的 allow_dependency_downloads）。
+##
+## 选择它而不是 lwIP 自带的 MQTT 客户端，是因为要连 HiveMQ Cloud：
+## 对方**强制 TLS**，而 esp-mqtt 对 TLS / 证书包（esp_crt_bundle）有一流支持。
+dependencies:
+  espressif/mqtt: "^1.0.0"

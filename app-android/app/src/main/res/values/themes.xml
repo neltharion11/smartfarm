@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 用系统平台主题，避免为一个占位界面再引一套 UI 主题库依赖。
+         Compose 自己负责界面外观，这里只需要一个"无 ActionBar"的壳。 -->
+    <style name="Theme.SmartFarm" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>
